@@ -40,7 +40,7 @@ public final class AerisNativeCallsModule: Module, @unchecked Sendable {
         hasVideo: hasVideo
       ) { error in
         if let error {
-          promise.reject("ERR_NATIVE_CALL", error.localizedDescription, error)
+          promise.reject("ERR_NATIVE_CALL", error.localizedDescription)
         } else {
           promise.resolve(nil)
         }
