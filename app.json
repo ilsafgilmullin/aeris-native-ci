@@ -10,17 +10,43 @@
       "supportsTablet": false,
       "bundleIdentifier": "ru.aeris.nativeci",
       "infoPlist": {
+        "NSCameraUsageDescription": "Камера нужна для проверки видеозвонков AERIS.",
+        "NSMicrophoneUsageDescription": "Микрофон нужен для проверки звонков AERIS.",
         "UIBackgroundModes": ["audio", "voip", "remote-notification"]
       }
     },
     "android": {
       "package": "ru.aeris.nativeci",
       "permissions": [
+        "android.permission.CAMERA",
+        "android.permission.RECORD_AUDIO",
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.BLUETOOTH_CONNECT",
         "android.permission.MANAGE_OWN_CALLS",
         "android.permission.POST_NOTIFICATIONS",
         "android.permission.FOREGROUND_SERVICE",
         "android.permission.FOREGROUND_SERVICE_PHONE_CALL"
       ]
-    }
+    },
+    "plugins": [
+      [
+        "@livekit/react-native-expo-plugin",
+        {
+          "android": {
+            "audioType": "communication"
+          },
+          "ios": {
+            "enableMultitaskingCameraAccess": false
+          }
+        }
+      ],
+      [
+        "@config-plugins/react-native-webrtc",
+        {
+          "cameraPermission": "Разрешить AERIS использовать камеру для видеозвонков.",
+          "microphonePermission": "Разрешить AERIS использовать микрофон для звонков."
+        }
+      ]
+    ]
   }
 }
