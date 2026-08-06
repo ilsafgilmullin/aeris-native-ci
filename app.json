@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "AERIS Native CI",
+    "slug": "aeris-native-ci",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "scheme": "aerisnativeci",
+    "userInterfaceStyle": "automatic",
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "ru.aeris.nativeci",
+      "infoPlist": {
+        "UIBackgroundModes": ["audio", "voip", "remote-notification"]
+      }
+    },
+    "android": {
+      "package": "ru.aeris.nativeci",
+      "permissions": [
+        "android.permission.MANAGE_OWN_CALLS",
+        "android.permission.POST_NOTIFICATIONS",
+        "android.permission.FOREGROUND_SERVICE",
+        "android.permission.FOREGROUND_SERVICE_PHONE_CALL"
+      ]
+    }
+  }
+}
