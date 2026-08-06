@@ -12,14 +12,22 @@
     "start": "expo start",
     "prebuild:android": "expo prebuild --clean --platform android --no-install",
     "prebuild:ios": "expo prebuild --clean --platform ios --no-install",
-    "test:mobile-installation": "tsc -p validation/mobile/tsconfig.json --pretty false && node --test validation/mobile/tests/*.test.cjs"
+    "test:mobile-installation": "tsc -p validation/mobile/tsconfig.json --pretty false && node --test validation/mobile/tests/*.test.cjs",
+    "test:video-smoke": "tsc -p validation/video/tsconfig.json --pretty false"
   },
   "dependencies": {
+    "@config-plugins/react-native-webrtc": "15.0.1",
+    "@livekit/react-native": "2.11.1",
+    "@livekit/react-native-expo-plugin": "1.0.2",
+    "@livekit/react-native-webrtc": "144.1.1",
     "expo": "~57.0.10",
+    "livekit-client": "2.21.0",
     "react": "19.2.3",
-    "react-native": "0.86.2"
+    "react-native": "0.86.2",
+    "react-native-worklets": "0.10.1"
   },
   "devDependencies": {
+    "@types/react": "~19.2.2",
     "typescript": "~6.0.3"
   }
 }
