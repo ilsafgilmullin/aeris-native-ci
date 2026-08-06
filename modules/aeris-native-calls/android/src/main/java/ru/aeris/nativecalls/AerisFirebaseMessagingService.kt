@@ -3,6 +3,7 @@ package ru.aeris.nativecalls
 import android.content.Context
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.Locale
 import java.util.TimeZone
@@ -45,7 +46,7 @@ internal class AerisFirebaseMessagingService : FirebaseMessagingService() {
       }
       val expiration = parser.parse(expiresAt) ?: return false
       expiration.time <= System.currentTimeMillis()
-    } catch (_: IllegalArgumentException) {
+    } catch (_: ParseException) {
       false
     }
   }
