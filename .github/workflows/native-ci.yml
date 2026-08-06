@@ -26,6 +26,8 @@ jobs:
         run: pnpm install --no-frozen-lockfile
       - name: Validate installation ID storage
         run: pnpm test:mobile-installation
+      - name: Validate LiveKit video APIs
+        run: pnpm test:video-smoke
 
   android:
     runs-on: ubuntu-latest
