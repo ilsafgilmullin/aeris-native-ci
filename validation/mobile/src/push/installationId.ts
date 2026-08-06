@@ -1,6 +1,6 @@
-export type RandomValuesSource = (bytes: Uint8Array) => void;
+export type RandomValuesSource = (bytes: Uint8Array<ArrayBuffer>) => void;
 
-function fillWithDefaultRandomValues(bytes: Uint8Array): void {
+function fillWithDefaultRandomValues(bytes: Uint8Array<ArrayBuffer>): void {
   if (globalThis.crypto?.getRandomValues) {
     globalThis.crypto.getRandomValues(bytes);
     return;
@@ -14,7 +14,7 @@ function fillWithDefaultRandomValues(bytes: Uint8Array): void {
 export function createInstallationId(
   fillRandomValues: RandomValuesSource = fillWithDefaultRandomValues,
 ): string {
-  const bytes = new Uint8Array(16);
+  const bytes = new Uint8Array(new ArrayBuffer(16));
   fillRandomValues(bytes);
 
   bytes[6] = ((bytes[6] ?? 0) & 0x0f) | 0x40;
