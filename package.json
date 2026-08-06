@@ -11,11 +11,15 @@
   "scripts": {
     "start": "expo start",
     "prebuild:android": "expo prebuild --clean --platform android --no-install",
-    "prebuild:ios": "expo prebuild --clean --platform ios --no-install"
+    "prebuild:ios": "expo prebuild --clean --platform ios --no-install",
+    "test:mobile-installation": "tsc -p validation/mobile/tsconfig.json --pretty false && node --test validation/mobile/tests/*.test.cjs"
   },
   "dependencies": {
     "expo": "~57.0.10",
     "react": "19.2.3",
     "react-native": "0.86.2"
+  },
+  "devDependencies": {
+    "typescript": "~6.0.3"
   }
 }
