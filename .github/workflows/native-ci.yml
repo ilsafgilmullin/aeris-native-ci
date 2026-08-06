@@ -32,8 +32,28 @@ jobs:
       - name: Generate Android project
         run: pnpm prebuild:android
       - name: Compile Android debug build
-        working-directory: android
-        run: ./gradlew assembleDebug --stacktrace --no-daemon
+        shell: bash
+        run: |
+          set -o pipefail
+          cd android
+          ./gradlew assembleDebug --stacktrace --no-daemon 2>&1 | tee ../android-build.log
+      - name: Extract Android compiler errors
+        if: failure()
+        shell: bash
+        run: |
+          grep -E '(^|: )(e: |error:|fatal error:)|\.kt:[0-9]+:[0-9]+' android-build.log \
+            | tail -n 250 > android-errors.txt || true
+          test -s android-errors.txt || tail -n 400 android-build.log > android-errors.txt
+      - name: Upload Android compiler logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-compiler-logs
+          path: |
+            android-build.log
+            android-errors.txt
+          if-no-files-found: warn
+          retention-days: 3
 
   ios:
     runs-on: macos-latest
@@ -55,8 +75,10 @@ jobs:
         working-directory: ios
         run: pod install
       - name: Compile iOS simulator build
-        working-directory: ios
+        shell: bash
         run: |
+          set -o pipefail
+          cd ios
           WORKSPACE=$(find . -maxdepth 1 -name '*.xcworkspace' -print -quit)
           test -n "$WORKSPACE"
           SCHEME=$(xcodebuild -workspace "$WORKSPACE" -list -json | python3 -c 'import json,sys; print(json.load(sys.stdin)["workspace"]["schemes"][0])')
@@ -67,4 +89,21 @@ jobs:
             -sdk iphonesimulator \
             -destination 'generic/platform=iOS Simulator' \
             CODE_SIGNING_ALLOWED=NO \
-            build
+            build 2>&1 | tee ../ios-build.log
+      - name: Extract iOS compiler errors
+        if: failure()
+        shell: bash
+        run: |
+          grep -E '(^|: )(error:|fatal error:)|\.swift:[0-9]+:[0-9]+:' ios-build.log \
+            | tail -n 250 > ios-errors.txt || true
+          test -s ios-errors.txt || tail -n 400 ios-build.log > ios-errors.txt
+      - name: Upload iOS compiler logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-compiler-logs
+          path: |
+            ios-build.log
+            ios-errors.txt
+          if-no-files-found: warn
+          retention-days: 3
