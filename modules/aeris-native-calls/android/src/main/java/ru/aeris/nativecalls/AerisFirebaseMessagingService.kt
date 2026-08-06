@@ -3,6 +3,10 @@ package ru.aeris.nativecalls
 import android.content.Context
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.Locale
+import java.util.TimeZone
 
 internal class AerisFirebaseMessagingService : FirebaseMessagingService() {
   override fun onCreate() {
@@ -25,12 +29,26 @@ internal class AerisFirebaseMessagingService : FirebaseMessagingService() {
   override fun onMessageReceived(message: RemoteMessage) {
     super.onMessageReceived(message)
     val data = message.data
-    if (data["type"] != "incoming-call") return
+    if (data["type"] != "incoming-call" || isExpired(data["expiresAt"])) return
 
     val callId = data["callId"] ?: return
     val callerName = data["callerName"] ?: "AERIS Call"
     val hasVideo = data["kind"] == "video"
     AerisNativeCallsManager.reportIncomingCall(callId, callerName, hasVideo)
+  }
+
+  private fun isExpired(expiresAt: String?): Boolean {
+    if (expiresAt.isNullOrBlank()) return false
+    return try {
+      val parser = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.US).apply {
+        isLenient = false
+        timeZone = TimeZone.getTimeZone("UTC")
+      }
+      val expiration = parser.parse(expiresAt) ?: return false
+      expiration.time <= System.currentTimeMillis()
+    } catch (_: ParseException) {
+      false
+    }
   }
 
   companion object {

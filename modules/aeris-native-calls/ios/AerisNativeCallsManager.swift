@@ -22,6 +22,11 @@ public final class AerisNativeCallsManager: NSObject, PKPushRegistryDelegate, CX
   private let tokenDefaultsKey = "aeris.voip.push.token"
   private let pendingActionKey = "aeris.native.call.pending.action"
   private let pendingCallIdKey = "aeris.native.call.pending.id"
+  private let iso8601Formatter: ISO8601DateFormatter = {
+    let formatter = ISO8601DateFormatter()
+    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+    return formatter
+  }()
 
   public override init() {
     let configuration = CXProviderConfiguration()
@@ -166,7 +171,15 @@ public final class AerisNativeCallsManager: NSObject, PKPushRegistryDelegate, CX
       return
     }
     let hasVideo = (dictionary["kind"] as? String) == "video"
-    reportIncomingCall(callId: callId, callerName: callerName, hasVideo: hasVideo) { _ in
+    let expired = (dictionary["expiresAt"] as? String)
+      .flatMap { iso8601Formatter.date(from: $0) }
+      .map { $0 <= Date() }
+      ?? false
+
+    reportIncomingCall(callId: callId, callerName: callerName, hasVideo: hasVideo) { [weak self] error in
+      if error == nil, expired, let uuid = UUID(uuidString: callId) {
+        self?.provider.reportCall(with: uuid, endedAt: Date(), reason: .unanswered)
+      }
       completion()
     }
   }
