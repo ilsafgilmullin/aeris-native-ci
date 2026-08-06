@@ -12,6 +12,13 @@ export async function enableCamera(room: Room): Promise<void> {
   await room.localParticipant.setCameraEnabled(true);
 }
 
+export async function switchCamera(room: Room): Promise<void> {
+  const publication = room.localParticipant.getTrackPublication(Track.Source.Camera);
+  const videoTrack = publication?.videoTrack;
+  if (!videoTrack) throw new Error('Camera track is unavailable');
+  await videoTrack.restartTrack({ facingMode: 'environment' });
+}
+
 export function VideoSmoke({ room }: { room: Room }) {
   const publication = room.localParticipant.getTrackPublication(Track.Source.Camera);
 
