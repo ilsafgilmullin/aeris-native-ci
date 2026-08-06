@@ -1,0 +1,8 @@
+{
+  "name": "aeris-native-calls",
+  "version": "0.1.0",
+  "description": "AERIS Call native CallKit, PushKit and Core-Telecom bridge",
+  "main": "index.ts",
+  "license": "UNLICENSED",
+  "author": "AERIS"
+}
