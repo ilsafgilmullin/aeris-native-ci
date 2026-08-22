@@ -26,6 +26,8 @@ jobs:
         run: pnpm install --no-frozen-lockfile
       - name: Validate installation ID storage
         run: pnpm test:mobile-installation
+      - name: Validate push token compatibility
+        run: pnpm test:push-token-compatibility
 
   android:
     runs-on: ubuntu-latest

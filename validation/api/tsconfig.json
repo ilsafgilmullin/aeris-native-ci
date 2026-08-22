@@ -6,16 +6,11 @@
     "strict": true,
     "noUncheckedIndexedAccess": true,
     "exactOptionalPropertyTypes": true,
-    "esModuleInterop": true,
     "skipLibCheck": true,
     "outDir": "dist",
     "rootDir": "src",
-    "lib": ["ES2022", "DOM"],
+    "lib": ["ES2022"],
     "types": []
   },
-  "include": [
-    "src/push/installationId.ts",
-    "src/push/installationStorageCore.ts",
-    "src/push/pushTokenChange.ts"
-  ]
+  "include": ["src/push-token-compatibility.ts"]
 }

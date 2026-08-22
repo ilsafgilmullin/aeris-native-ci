@@ -12,7 +12,8 @@
     "start": "expo start",
     "prebuild:android": "expo prebuild --clean --platform android --no-install",
     "prebuild:ios": "expo prebuild --clean --platform ios --no-install",
-    "test:mobile-installation": "tsc -p validation/mobile/tsconfig.json --pretty false && node --test validation/mobile/tests/*.test.cjs"
+    "test:mobile-installation": "tsc -p validation/mobile/tsconfig.json --pretty false && node --test validation/mobile/tests/*.test.cjs",
+    "test:push-token-compatibility": "tsc -p validation/api/tsconfig.json --pretty false && node --test validation/api/tests/*.test.cjs"
   },
   "dependencies": {
     "expo": "~57.0.10",
