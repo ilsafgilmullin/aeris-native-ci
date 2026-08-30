@@ -31,7 +31,7 @@ jobs:
 
   android:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
@@ -55,21 +55,37 @@ jobs:
         run: |
           set -o pipefail
           cd android
-          ./gradlew assembleDebug --stacktrace --no-daemon 2>&1 | tee ../android-build.log
+          ./gradlew assembleDebug --stacktrace --no-daemon 2>&1 | tee ../android-debug-build.log
+      - name: Compile Android release preview
+        shell: bash
+        run: |
+          set -o pipefail
+          cd android
+          ./gradlew assembleRelease --stacktrace --no-daemon 2>&1 | tee ../android-release-build.log
+      - name: Verify release APK
+        shell: bash
+        run: |
+          APK=$(find android/app/build/outputs/apk/release -type f -name '*.apk' -size +0c -print -quit)
+          test -n "$APK"
+          echo "Release preview APK: $APK"
       - name: Extract Android compiler errors
         if: failure()
         shell: bash
         run: |
-          grep -E '(^|: )(e: |error:|fatal error:)|\.kt:[0-9]+:[0-9]+' android-build.log \
+          cat android-debug-build.log android-release-build.log 2>/dev/null \
+            | grep -E '(^|: )(e: |error:|fatal error:)|\.kt:[0-9]+:[0-9]+' \
             | tail -n 250 > android-errors.txt || true
-          test -s android-errors.txt || tail -n 400 android-build.log > android-errors.txt
+          if ! test -s android-errors.txt; then
+            cat android-debug-build.log android-release-build.log 2>/dev/null | tail -n 400 > android-errors.txt || true
+          fi
       - name: Upload Android compiler logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: android-compiler-logs
           path: |
-            android-build.log
+            android-debug-build.log
+            android-release-build.log
             android-errors.txt
           if-no-files-found: warn
           retention-days: 3
